@@ -17,12 +17,13 @@ forward <- function(w,b,x_i) {
   activation_func(z, 'degrau')[1,1]
 }
 
-train <- function(X, Y, epoch, learning_rate) {
+train_and_test <- function(X, Y, W, epoch, learning_rate) {
   # inicializando pesos e bias
   w = matrix(runif(dim(X)[2])-0.5, nrow=1, ncol=dim(X)[2])
   b = 0
   # tamanho da entrada
   x_len = length(Y)
+  w_len = dim(W)[1]
  
   for(step in 1:epoch) {
     for(i in 1:x_len) {
@@ -34,9 +35,16 @@ train <- function(X, Y, epoch, learning_rate) {
   }
   print(w)
   print(b)
+  print(error)
+
+  for(i in 1:w_len) {
+    y_pred = forward(w, b, W[i,])
+    cat("Input => ",W[i,],"\nOuput =>", y_pred, "\n----\n")
+  }
 }
 
 x = matrix(c(0,0,0,1,1,0,1,1), nrow=4, ncol=2, byrow=TRUE)
+w = matrix(c(1,1,0,1,0,0,1,1), nrow=4, ncol=2, byrow=TRUE)
 y = c(0,0,0,1)
 
-train(x, y, 1000, 0.03)
+train_and_test(x, y, w, 100, 0.03)
