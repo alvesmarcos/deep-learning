@@ -94,13 +94,13 @@ if __name__=='__main__':
     # print('x:', x)
     # print('y_pred:', y_pred)
 
-    x,y = g.data_1A1(1000)
+    x,y = g.data_1A1(1000,dtype='train')
     D = x.shape[1]
     model = NeuralNetwork()
     model.add(Layer(units=8, activation=degrau, input_dim=D))
     model.fit(x, y, epochs=100, verbose=False)
     
-    z,l = g.data_1A1(1)
+    z,l = g.data_1A1(1,dtype='validation')
     
     w,b = model.get_weights()
     y_pred = model.predict(z, verbose=False)

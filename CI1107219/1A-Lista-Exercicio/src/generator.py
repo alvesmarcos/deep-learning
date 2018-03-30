@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def pattern_1A1(X):
     Y = []
@@ -21,7 +22,30 @@ def pattern_1A1(X):
             Y.append([0,0,0,0,0,0,0,1])
     return np.array(Y)
 
-def data_1A1(size, verbose=False):
-    X =  np.random.randint(2,size=(size,3))
-    Y = pattern_1A1(X)
-    return X,Y
+def data_1A1(size, dtype='train', verbose=False):
+    try:
+        X = np.genfromtxt('../data/'+dtype+'/1a1X.txt',delimiter=',')
+        Y = np.genfromtxt('../data/'+dtype+'/1a1Y.txt',delimiter=',')
+        if verbose:
+            print('Conjunto de entradas: ', X)
+            print('Labels: ', Y)
+        return X,Y
+    except Exception as err:
+        if verbose:
+            print(err)
+        X = np.random.randint(2,size=(size,3))
+        Y = pattern_1A1(X)
+        # salva arquivo
+        np.savetxt('../data/'+dtype+'/1a1X.txt', X, delimiter=',', fmt='%.0f')
+        np.savetxt('../data/'+dtype+'/1a1Y.txt', Y, delimiter=',', fmt='%.0f')
+        return X,Y
+
+def data_reset_1A1(dtype='train',verbose=False):
+    try:
+        os.remove('../data/'+dtype+'/1a1X.txt')
+        os.remove('../data/'+dtype+'/1a1Y.txt')
+        if verbose:
+            print('File removed: 1a1X.txt, 1a1Y.txt')
+    except Exception as err:
+        if verbose:
+            print(err)
