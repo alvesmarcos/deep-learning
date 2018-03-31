@@ -1,6 +1,9 @@
 import numpy as np
 import generator as g
 
+same = lambda x,y: x
+threshold = lambda x, limit: np.where(x>limit, 1, 0) 
+
 # Sigmoid: saída entre [0,1]
 def sigmoid(z,derivate=False):
     return 1/(1+np.exp(-z))
@@ -20,8 +23,8 @@ def degrau(z,derivate=False):
 class Layer:
     def __init__(self, units=1, activation=degrau, input_dim=1, use_bias=True):
         self.units = units
-        self.weights = np.random.random((1, input_dim))-0.5
-        self.bias = 0
+        self.weights = np.random.random((units, input_dim))-0.5
+        self.bias = np.zeros(units)
         self.activation = activation
         self.input_dim = input_dim
         self.use_bias = use_bias
@@ -29,15 +32,18 @@ class Layer:
 class NeuralNetwork:
     def __init__(self):
         self._layers = []
-        self._learning_rate = 0.2
+        self._learning_rate = 0.02
     
     def __backpropagation(self):
         pass
+
+    def __error(self,y_i,y_pred):
+        return y_i-y_pred
     
     def __forward(self, x_i):
         input_layer = x_i
         for layer in self._layers:
-            z = np.dot(input_layer, layer.weights.T) + layer.bias if layer.use_bias else 0
+            z = np.dot(input_layer, layer.weights.T) + (layer.bias if layer.use_bias else np.zeros(layer.units))
             y = layer.activation(z)
         return y
 
@@ -50,8 +56,14 @@ class NeuralNetwork:
     def add(self, layer):
         self._layers.append(layer)
     
-    def evaluate(self):
-        pass
+    def evaluate(self,y_pred, y, func=same, dtype=int):
+        score = 0
+        total = 100.0/y.shape[0]
+
+        for y_i, y_pred_i in zip(y,y_pred):
+            if np.array_equal(y_i.astype(dtype),y_pred_i.astype(dtype)):
+                score+=1
+        return score*total
 
     def fit(self, X=None, Y=None, epochs=1, verbose=False): 
         for step in range(epochs):
@@ -61,7 +73,7 @@ class NeuralNetwork:
                 y_i = y_i.reshape(1, Y.shape[1])
                 # propagacao para camadas da frente
                 y_pred = self.__forward(x_i)
-                error = y_i - y_pred
+                error = self.__error(y_i,y_pred)
                 # atualiza peso da utiliza camada
                 self.__update_weight(error, x_i)
 
@@ -75,7 +87,7 @@ class NeuralNetwork:
         y_pred = []
         for i in range(len(X)):
             y_pred.append(self.__forward(X[i]))
-        return y_pred
+        return np.array(y_pred)
 
 if __name__=='__main__':
     # x = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
@@ -98,15 +110,19 @@ if __name__=='__main__':
     D = x.shape[1]
     model = NeuralNetwork()
     model.add(Layer(units=8, activation=degrau, input_dim=D))
-    model.fit(x, y, epochs=100, verbose=False)
-    
-    z,l = g.data_1A1(1,dtype='validation')
-    
+    model.fit(x, y, epochs=500, verbose=False)
+    # conjunto de validacao
+    z,l = g.data_1A1(500,dtype='validation')
+
     w,b = model.get_weights()
     y_pred = model.predict(z, verbose=False)
+    accurancy = model.evaluate(y_pred, l)
 
     print('w:', w)
     print('b:', b)
-    print('x:', z)
-    print('y_pred:', y_pred)
-    print('y_real:', l)
+    print('Accurancy: {0:.1f}%'.format(accurancy))
+
+    #reset base de dados
+    # g.data_reset_1A1('train',True)
+    # g.data_reset_1A1('validation',True)
+    

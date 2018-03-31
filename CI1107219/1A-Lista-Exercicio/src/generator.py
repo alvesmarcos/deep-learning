@@ -22,12 +22,12 @@ def pattern_1A1(X):
             Y.append([0,0,0,0,0,0,0,1])
     return np.array(Y)
 
-def data_1A1(size, dtype='train', verbose=False):
+def data_1A1(size, dtype='train',verbose=False):
     try:
         X = np.genfromtxt('../data/'+dtype+'/1a1X.txt',delimiter=',')
         Y = np.genfromtxt('../data/'+dtype+'/1a1Y.txt',delimiter=',')
         if verbose:
-            print('Conjunto de entradas: ', X)
+            print('Inputs: ', X)
             print('Labels: ', Y)
         return X,Y
     except Exception as err:
@@ -45,7 +45,7 @@ def data_reset_1A1(dtype='train',verbose=False):
         os.remove('../data/'+dtype+'/1a1X.txt')
         os.remove('../data/'+dtype+'/1a1Y.txt')
         if verbose:
-            print('File removed: 1a1X.txt, 1a1Y.txt')
+            print('File(s) removed: 1a1X.txt, 1a1Y.txt')
     except Exception as err:
         if verbose:
             print(err)
