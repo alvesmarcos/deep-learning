@@ -1,8 +1,9 @@
 import numpy as np
 import generator as g
 
-same = lambda x,y: x
-threshold = lambda x, limit: np.where(x>limit, 1, 0) 
+same = lambda x: x
+# tupla(x,limit)
+threshold = lambda x: np.where(x[0]>x[1], 1, 0) 
 
 # Sigmoid: saída entre [0,1]
 def sigmoid(z,derivate=False):
@@ -52,6 +53,7 @@ class NeuralNetwork:
 
     def __update_weight(self, error, x_i):
         self._layers[-1].weights = self._layers[-1].weights + self._learning_rate*np.dot(error.T, x_i)
+        self._layers[-1].bias = self._layers[-1].bias + self._learning_rate*error[0]
 
     def add(self, layer):
         self._layers.append(layer)
@@ -59,9 +61,13 @@ class NeuralNetwork:
     def evaluate(self,y_pred, y, func=same, dtype=int):
         score = 0
         total = 100.0/y.shape[0]
+        # mesmo tipo de saida
+        y_pred = y_pred.astype(dtype)
+        y = y.astype(dtype)
 
         for y_i, y_pred_i in zip(y,y_pred):
-            if np.array_equal(y_i.astype(dtype),y_pred_i.astype(dtype)):
+            y_pred_i = func(y_pred_i)
+            if np.array_equal(y_i,y_pred_i):
                 score+=1
         return score*total
 
@@ -74,7 +80,7 @@ class NeuralNetwork:
                 # propagacao para camadas da frente
                 y_pred = self.__forward(x_i)
                 error = self.__error(y_i,y_pred)
-                # atualiza peso da utiliza camada
+                # --
                 self.__update_weight(error, x_i)
 
     def get_learning_rate(self):
@@ -90,22 +96,6 @@ class NeuralNetwork:
         return np.array(y_pred)
 
 if __name__=='__main__':
-    # x = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-    # y = np.array([[0, 0, 0, 1]]).T
-    # D = x.shape[1]
-    
-    # model = NeuralNetwork()
-    # model.add(Layer(units=1, activation=relu, input_dim=D))
-    # model.fit(x, y, epochs=10, verbose=False)
-
-    # w,b = model.get_weights()
-    # y_pred = model.predict(x, verbose=False)
-
-    # print('w:', w)
-    # print('b:', b)
-    # print('x:', x)
-    # print('y_pred:', y_pred)
-
     x,y = g.data_1A1(1000,dtype='train')
     D = x.shape[1]
     model = NeuralNetwork()
@@ -116,7 +106,9 @@ if __name__=='__main__':
 
     w,b = model.get_weights()
     y_pred = model.predict(z, verbose=False)
-    accurancy = model.evaluate(y_pred, l)
+    accurancy = model.evaluate(y_pred, l, func=same)
+
+    print(y_pred)
 
     print('w:', w)
     print('b:', b)

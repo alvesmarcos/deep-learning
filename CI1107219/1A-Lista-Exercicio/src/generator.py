@@ -45,7 +45,8 @@ def data_reset_1A1(dtype='train',verbose=False):
         os.remove('../data/'+dtype+'/1a1X.txt')
         os.remove('../data/'+dtype+'/1a1Y.txt')
         if verbose:
-            print('File(s) removed: 1a1X.txt, 1a1Y.txt')
+            print('Files removed: 1a1X.txt, 1a1Y.txt')
     except Exception as err:
         if verbose:
             print(err)
+            
