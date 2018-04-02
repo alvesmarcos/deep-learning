@@ -76,7 +76,6 @@ class NeuralNetwork:
             for x_i, y_i in zip(X,Y):
                 # reshape x_i, y_i
                 x_i =  x_i.reshape(1, X.shape[1])
-                y_i = y_i.reshape(1, Y.shape[1])
                 # propagacao para camadas da frente
                 y_pred = self.__forward(x_i)
                 error = self.__error(y_i,y_pred)
@@ -107,8 +106,6 @@ if __name__=='__main__':
     w,b = model.get_weights()
     y_pred = model.predict(z, verbose=False)
     accurancy = model.evaluate(y_pred, l, func=same)
-
-    print(y_pred)
 
     print('w:', w)
     print('b:', b)
