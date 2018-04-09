@@ -48,3 +48,4 @@ w = matrix(c(1,1,0,1,0,0,1,1), nrow=4, ncol=2, byrow=TRUE)
 y = c(0,0,0,1)
 
 train_and_test(x, y, w, 100, 0.03)
+

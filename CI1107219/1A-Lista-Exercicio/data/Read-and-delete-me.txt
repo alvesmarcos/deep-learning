@@ -1,0 +1,4 @@
+## Como gerar dados ##
+
+Para gerar as entradas dos problemas da 1ª Lista de Exercício vá até o notebook "Gerador de Dados" e rode cada trecho do script
+
